@@ -1,10 +1,10 @@
-#!/usr/bin/env python
 
 from pydrake.all import *
 from controllers import *
 from planners import BasicTrunkPlanner, TowrTrunkPlanner
 import os
 import sys
+import matplotlib.pyplot as plt
 
 ############### Common Parameters ###################
 show_trunk_model = True
@@ -21,8 +21,11 @@ sim_time = 6.0
 dt = 5e-3
 target_realtime_rate = 1.0
 
-show_diagram = False
-make_plots = False
+show_diagram = True
+make_plots = True
+
+
+meshcat = StartMeshcat()
 
 #####################################################
 
@@ -38,6 +41,9 @@ scene_graph = builder.AddSystem(SceneGraph())
 plant = builder.AddSystem(MultibodyPlant(time_step=dt))
 plant.RegisterAsSourceForSceneGraph(scene_graph) 
 quad = Parser(plant=plant).AddModelFromFile(robot_urdf,"quad")
+
+# meshcat
+visualizer = MeshcatVisualizer.AddToBuilder(builder, scene_graph, meshcat)
 
 # Add a flat ground with friction
 X_BG = RigidTransform()
@@ -179,7 +185,9 @@ plant.SetPositions(plant_context,q0)
 plant.SetVelocities(plant_context,qd0)
 
 # Run the simulation!
+meshcat.StartRecording()
 simulator.AdvanceTo(sim_time)
+meshcat.PublishRecording()
 
 if make_plots:
     log = logger.FindLog(diagram_context)

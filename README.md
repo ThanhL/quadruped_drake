@@ -31,3 +31,8 @@ make
 Start the drake visualizer `bazel-bin/tools/drake_visualizer`.
 
 Run the simulation script `./simulate.py`.
+
+
+## NOTE
+
+Install without conda, or else it seems everything would break.
