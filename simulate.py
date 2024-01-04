@@ -5,6 +5,7 @@ from planners import BasicTrunkPlanner, TowrTrunkPlanner
 import os
 import sys
 import matplotlib.pyplot as plt
+import pydot
 
 ############### Common Parameters ###################
 show_trunk_model = True
@@ -161,6 +162,12 @@ if show_diagram:
     plt.figure()
     plot_system_graphviz(diagram,max_depth=2)
     plt.show()
+
+    graph = pydot.graph_from_dot_data(
+        diagram.GetGraphvizString(max_depth=2))[0]
+    graph.write_png("quadruped_diagram.png")
+
+
 
 # Simulator setup
 simulator = Simulator(diagram, diagram_context)
